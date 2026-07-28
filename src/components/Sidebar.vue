@@ -81,7 +81,7 @@ aside {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    max-height: calc(100vh - 2em);
+    height: calc(100vh - 2em);
 
     @media (max-width: 800px) {
         z-index: 1;
@@ -90,6 +90,7 @@ aside {
         left: 1em;
         right: 1em;
         position: fixed;
+        height: unset;
     }
 
     .label,
@@ -149,6 +150,7 @@ aside {
         transition: background-color 0.2s;
         color: var(--color-text);
         height: 42px;
+        width: 42px;
 
         &.router-link-active {
             background: var(--color-background-soft);

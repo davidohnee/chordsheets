@@ -1,6 +1,11 @@
 <template>
     <div class="input">
-        <h2 v-if="label">{{ label }}</h2>
+        <label
+            v-if="label"
+            for="textinput"
+        >
+            {{ label }}
+        </label>
         <div class="items">
             <input
                 :value="modelValue"
@@ -9,6 +14,7 @@
                 type="text"
                 :placeholder="placeholder"
                 @change="$emit('change')"
+                id="textinput"
             />
             <IconButton
                 v-if="buttonLabel || buttonIcon"
@@ -59,20 +65,16 @@ const emitInput = (event: Event) => {
     flex-direction: column;
 }
 
-h2 {
-    margin: 0;
-    margin-bottom: 0.5em;
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-}
-
 input {
+    -webkit-appearance: initial;
+    -moz-appearance: initial;
+    appearance: initial;
     background: none;
     border: 1px solid var(--color-border);
     border-radius: 0.5em;
     padding: 0.5em;
     color: var(--color-text);
+    font-size: 1rem;
     font-family: inherit;
 
     &:focus {

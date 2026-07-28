@@ -82,30 +82,34 @@ main a:has(.clickable) {
         grid-template-columns: 1fr;
     }
 }
+
+body {
+    background: var(--color-background-soft);
+}
 </style>
 
 <style scoped>
 .screen {
     display: grid;
     grid-template-columns: max-content 1fr;
-    padding: 1em;
-    overflow: clip;
-    gap: 1em;
+    padding-left: 1em;
     min-height: 100vh;
-
-    background: var(--color-background-soft);
+    min-height: 100svh;
+    position: relative;
 
     @media (max-width: 800px) {
         grid-template-columns: 1fr;
         overflow: auto;
         padding-bottom: calc(2em + 74px);
+        padding-left: 0;
     }
 }
 
 main {
-    max-height: calc(100vh - 2em);
     display: flex;
     flex-direction: column;
+    overflow: auto;
+    padding: 1em;
 
     @media (max-width: 800px) {
         z-index: 0;

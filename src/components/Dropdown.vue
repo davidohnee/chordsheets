@@ -23,11 +23,16 @@ const emitInput = (event: Event) => {
 </script>
 <template>
     <div class="input">
-        <h2 v-if="label">{{ label }}</h2>
+        <label
+            v-if="label"
+            for="dropdown"
+            >{{ label }}</label
+        >
         <select
             :value="modelValue"
             @input="emitInput"
             class="dropdown"
+            id="dropdown"
         >
             <option
                 v-for="option in options"
@@ -44,6 +49,7 @@ const emitInput = (event: Event) => {
 .input {
     display: flex;
     flex-direction: column;
+    height: 100%;
 }
 
 h2 {
@@ -59,8 +65,10 @@ select {
     border: 1px solid var(--color-border);
     border-radius: 0.5em;
     padding: 0.5em;
+    height: 100%;
     color: var(--color-text);
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 1rem;
 
     &:focus {
         outline: none;

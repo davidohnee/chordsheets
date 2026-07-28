@@ -152,7 +152,6 @@ const onClick = async () => {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1em;
-    margin-top: 1em;
 
     & h1 {
         grid-column: span 2;
@@ -221,6 +220,7 @@ header {
     align-items: start;
     grid-template-columns: 200px 1fr;
     gap: 1em;
+    padding-bottom: 1em;
 
     @media screen and (max-width: 1200px) {
         grid-template-columns: 1fr;
@@ -229,6 +229,7 @@ header {
     .sidebar {
         display: flex;
         flex-direction: column;
+        height: 100%;
 
         position: sticky;
         top: 0;

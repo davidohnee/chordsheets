@@ -144,10 +144,6 @@ const isMobile = window.innerWidth < 800;
 
 .toolbar {
     background: var(--color-background);
-    position: sticky;
-    z-index: 1;
-    top: 1em;
-    padding-top: 1em;
     margin-bottom: 1em;
 }
 
@@ -179,6 +175,7 @@ const isMobile = window.innerWidth < 800;
 
 main {
     grid-column: 1;
+    position: relative;
 }
 
 aside {
