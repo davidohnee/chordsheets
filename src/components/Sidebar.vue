@@ -150,7 +150,7 @@ aside {
         transition: background-color 0.2s;
         color: var(--color-text);
         height: 42px;
-        width: 42px;
+        min-width: 42px;
 
         &.router-link-active {
             background: var(--color-background-soft);
