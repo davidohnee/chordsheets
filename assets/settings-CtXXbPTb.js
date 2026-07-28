@@ -1,0 +1,1 @@
+import{R as e,W as t}from"./_plugin-vue_export-helper-CGJcSYIJ.js";import{n}from"./pinia-BbKLpGF8.js";e();var r=n(`settings`,()=>{let e=t(!0);return{newEditor:e,editorUrl:t=>{let n=`/editor/`;return e.value&&(n+=`v2/`),n+t}}});export{r as t};
