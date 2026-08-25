@@ -1,4 +1,4 @@
-import { SCALES, type Scale } from "./types";
+import { type Scale } from "./types";
 
 type ScaleLookup = {
     [K in Scale]: {

@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error no typing
 import MidiParser from "midi-parser-js";
 
 export interface INote {

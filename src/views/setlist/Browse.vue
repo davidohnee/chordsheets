@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useSongStore } from "@/stores/songs";
-import Editor from "../editor2/Editor.vue";
 import { useSetlistStore } from "@/stores/setlists";
 import { useRouter } from "vue-router";
 import type { ISetlist } from "@/types";
@@ -33,6 +31,7 @@ const duplicate = (setlist: ISetlist) => {
         <router-link
             v-for="setlist in setlistStore.setlists"
             :to="`/setlists/edit/${setlist.id}`"
+            :key="setlist.id"
         >
             <div class="container clickable setlist">
                 <div class="info">

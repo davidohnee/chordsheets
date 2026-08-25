@@ -11,7 +11,7 @@ import { debounce } from "lodash";
 import { loadText } from "@/textLoader";
 
 export type Item = {
-    id: any;
+    id: unknown;
     title: string;
     subtitle: string;
     img?: string;
@@ -22,7 +22,7 @@ export type Item = {
           }
         | string;
     action?: (param: { item: Item; query: string }) => void;
-    data?: any;
+    data?: unknown;
 };
 
 const query = ref("");

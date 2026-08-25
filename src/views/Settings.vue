@@ -3,10 +3,7 @@ import IconButton from "@/components/IconButton.vue";
 import { useSongStore } from "@/stores/songs";
 import { ref } from "vue";
 import Import from "@/components/modals/Import.vue";
-import Switch from "@/components/Switch.vue";
-import { useSettingsStore } from "@/stores/settings";
 
-const settings = useSettingsStore();
 const store = useSongStore();
 const importDialog = ref<typeof Import>();
 
@@ -43,25 +40,6 @@ const importLib = () => {
                 :style="'yellow'"
             />
         </div>
-        <aside class="container w-2 learn">
-            <div class="content">
-                <div class="space-between">
-                    <div>
-                        <h2>New editor</h2>
-                        <p>
-                            The new editor lets you edit your songs directly
-                            in-place. No more switching between editor and
-                            preview. It also introduces new shortcuts to improve
-                            your workflow.
-                        </p>
-                    </div>
-                    <Switch
-                        class="try-new-editor"
-                        v-model="settings.newEditor"
-                    />
-                </div>
-            </div>
-        </aside>
     </div>
 </template>
 

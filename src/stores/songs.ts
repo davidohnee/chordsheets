@@ -73,7 +73,7 @@ export const useSongStore = defineStore("songs", () => {
         songs.value.splice(newIndex, 0, song);
     };
 
-    const song = (id: any) => {
+    const song = (id: number) => {
         return songs.value.find((song) => song.id == id);
     };
 

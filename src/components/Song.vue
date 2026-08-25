@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useSongStore } from "@/stores/songs";
 import type { PropType } from "vue";
 import type { ISong } from "@/types";
 import { useSettingsStore } from "@/stores/settings";

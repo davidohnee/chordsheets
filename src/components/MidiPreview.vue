@@ -198,6 +198,7 @@ const getKeyboardStyle = () => {
             <div
                 v-for="key in getKeyStyle()"
                 :style="key"
+                :key="key.bottom + '-' + key.left"
             />
         </div>
         <div
@@ -207,11 +208,13 @@ const getKeyboardStyle = () => {
             <div
                 v-for="thisStyle in getBackStyle()"
                 :style="thisStyle"
+                :key="thisStyle.bottom + '-' + thisStyle.left"
             />
             <div
                 class="note"
                 v-for="note in notes"
                 :style="getNoteStyle(note)"
+                :key="note.id"
             />
         </div>
     </div>

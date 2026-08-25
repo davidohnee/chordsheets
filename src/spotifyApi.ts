@@ -36,7 +36,7 @@ const getAudioFeatures = async (id: string) => {
     return response.json();
 };
 
-interface ISongInfo {
+export interface ISongInfo {
     name: string;
     artist: string;
     album: string;
@@ -46,8 +46,13 @@ interface ISongInfo {
     tempo: number;
 }
 
-const convertKey = (features: any) => {
-    const keyMap = {
+type Features = {
+    mode: number;
+    key: number;
+};
+
+const convertKey = (features: Features) => {
+    const keyMap: { [key: number]: string } = {
         0: "C",
         1: "C♯",
         2: "D",
@@ -60,11 +65,11 @@ const convertKey = (features: any) => {
         9: "A",
         10: "A♯",
         11: "B"
-    } as any;
-    const modeMap = {
+    };
+    const modeMap: { [key: number]: string } = {
         0: "",
         1: "m"
-    } as any;
+    };
     return `${keyMap[features.key]}${modeMap[features.mode]}`;
 };
 

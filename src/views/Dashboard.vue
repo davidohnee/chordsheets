@@ -2,7 +2,7 @@
 import { useSongStore } from "@/stores/songs";
 import { ref } from "vue";
 import { jsPDF } from "jspdf";
-import Editor from "./editor2/Editor.vue";
+import Editor from "./editor/Editor.vue";
 import QuickActionMenu from "@/components/QuickActionMenu.vue";
 import Import from "@/components/modals/Import.vue";
 
@@ -13,7 +13,7 @@ const renderProgress = ref(-1);
 
 const renderAll = async () => {
     renderDialog.value?.showModal();
-    let pdf = new jsPDF({
+    const pdf = new jsPDF({
         orientation: "portrait",
         unit: "px",
         format: "a4"
@@ -106,6 +106,7 @@ const exportAll = async () => {
             <Editor
                 ref="allPages"
                 v-for="song in store.songs"
+                :key="song.id"
                 printing
                 :song="song"
             />

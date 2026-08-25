@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
 import Dropdown from "../../components/Dropdown.vue";
 import Keyboard from "./Keyboard.vue";
 import { SHARP_KEYS, SCALES, type Scale, type Key } from "@/types";
@@ -65,6 +64,7 @@ const chordName = (chord: number[]) => {
             <div
                 class="chord"
                 v-for="(name, degree) in roman"
+                :key="degree"
             >
                 <h3>{{ name }}</h3>
                 {{

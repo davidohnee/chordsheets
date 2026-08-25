@@ -63,7 +63,10 @@ const autoResize = () => {
 onMounted(() => autoResize());
 
 watchEffect(() => {
-    if (!editing.value) return;
+    if (!editing.value) {
+        update(value.value);
+        return;
+    }
     autoResize();
 });
 </script>

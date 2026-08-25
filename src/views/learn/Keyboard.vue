@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, computed, type PropType } from "vue";
+import { computed, type PropType } from "vue";
 import { SHARP_KEYS, type Key } from "../../types";
 
 const props = defineProps({
@@ -12,8 +12,8 @@ const props = defineProps({
         default: 72
     },
     highlight: {
-        type: Array as PropType<Number[]>,
-        default: []
+        type: Array as PropType<number[]>,
+        default: () => []
     },
     clickable: {
         type: Boolean,
@@ -62,6 +62,7 @@ defineEmits(["keypress"]);
                 left: blackKeyPosition(key)
             }"
             class="key"
+            :key="key.i"
             @click="$emit('keypress', key.i)"
         >
             {{ key.name }}

@@ -26,7 +26,7 @@ type Action =
 const props = defineProps({
     features: {
         type: Array as PropType<Action[]>,
-        default: ["song.create", "setlist.create", "settings"]
+        default: () => ["song.create", "setlist.create", "settings"]
     }
 });
 

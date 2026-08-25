@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import { ref, type PropType } from "vue";
+import { computed, ref, type PropType } from "vue";
 import type { Chord, ISong } from "@/types";
-import { useSongStore } from "@/stores/songs";
 import { getSongInfo, parseId, type ISongInfo } from "@/spotifyApi";
 import IconButton from "../IconButton.vue";
 import TextInput from "../TextInput.vue";
 
-const store = useSongStore();
 const modal = ref<HTMLDialogElement>();
 const spotifyInfo = ref<ISongInfo>();
 
@@ -38,6 +36,13 @@ const props = defineProps({
         type: Object as PropType<ISong>,
         required: true
     }
+});
+
+const emit = defineEmits(["update:song"]);
+
+const song = computed({
+    get: () => props.song,
+    set: (value: ISong) => emit("update:song", value)
 });
 
 const show = () => {
@@ -87,6 +92,7 @@ const changeIcon = (key: string) => {
 
 const applyChanges = () => {
     for (const key in changes.value) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (props.song as any)[key] = (changes.value as any)[key].to;
     }
 };
@@ -122,7 +128,10 @@ defineExpose({ show });
             >
                 <h3>Changes</h3>
                 <div class="content">
-                    <template v-for="(value, key) in changes">
+                    <template
+                        v-for="(value, key) in changes"
+                        :key="key"
+                    >
                         <span class="material-symbols-rounded">{{
                             changeIcon(key)
                         }}</span>
@@ -134,7 +143,7 @@ defineExpose({ show });
                         >
                         <TextInput
                             class="to"
-                            v-model="changes[key].to"
+                            v-model="changes[key].to as string"
                             :disabled="true"
                         />
                         <span
@@ -187,7 +196,6 @@ dialog {
 }
 
 .changes .content {
-    align-items: start;
     display: grid;
     grid-template-columns: 1ch 1fr 1ch 1fr 1ch;
     align-items: center;

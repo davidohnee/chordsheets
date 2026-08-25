@@ -8,7 +8,7 @@ import ChordProgressions from "./ChordProgressions.vue";
 import IconButton from "@/components/IconButton.vue";
 
 import { useRoute } from "vue-router";
-import { computed, onMounted } from "vue";
+import { computed } from "vue";
 
 const route = useRoute();
 
@@ -24,35 +24,6 @@ const activeTab = computed(() => {
     const tab = route.path.split("/").pop() as keyof typeof tabs;
     return tabs[tab];
 });
-
-const onClick = async () => {
-    //const device = await navigator.hid.requestDevice({ filters: [] });
-    let devices = await navigator.hid.getDevices();
-    devices.forEach(async (device) => {
-        console.log("HID: Device", device);
-
-        console.log("HID: Open device", device.collections[0]);
-
-        device.addEventListener("inputreport", (event) => {
-            const { data, device, reportId } = event;
-
-            console.log("HID: Input report", data, device, reportId);
-        });
-        const arrBuffer = new ArrayBuffer(61 - 3);
-        const arr = [0x81, Array(61 - 3).fill(0x00)];
-        const arrBufferView = new Uint8Array(arrBuffer);
-        arrBufferView.set(arr as any);
-        try {
-            await device.open();
-        } catch (error) {
-            console.log("HID: Error opening device", error);
-        }
-        console.log("HID: Device opened", device);
-        device.sendReport(129, arrBufferView);
-        device.sendReport(128, arrBufferView);
-        console.log("HID: Report sent");
-    });
-};
 </script>
 <template>
     <div class="learn">

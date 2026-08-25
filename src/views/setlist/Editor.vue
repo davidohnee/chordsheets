@@ -3,7 +3,7 @@ import { computed, onBeforeMount, onMounted, onUnmounted, ref } from "vue";
 import { jsPDF } from "jspdf";
 import draggable from "vuedraggable";
 import { useSongStore } from "@/stores/songs";
-import Editor from "../editor2/Editor.vue";
+import Editor from "../editor/Editor.vue";
 import Song from "@/components/Song.vue";
 import type { ISetlist, ISong } from "@/types";
 import EditableText from "@/components/EditableText.vue";
@@ -46,7 +46,7 @@ if (route.params.id === "new") {
 
 const renderAll = async () => {
     renderDialog.value?.showModal();
-    let pdf = new jsPDF({
+    const pdf = new jsPDF({
         orientation: "portrait",
         unit: "px",
         format: "a4"
@@ -131,7 +131,7 @@ const getSong = (song: { id: number } | ISong) => {
     return store.songs.find((s) => s.id === song.id) as ISong;
 };
 
-const onClick = (e: MouseEvent) => {
+const onClick = () => {
     addingSongToSection.value = null;
 };
 
@@ -172,7 +172,7 @@ const durationAsString = (duration: number) => {
 
 const estimatedDuration = (section: { songs: { id: number }[] }) => {
     // returns the estimated duration of a section in minutes
-    return section.songs.reduce((acc, _) => acc + 4, 0);
+    return section.songs.reduce((acc) => acc + 4, 0);
 };
 
 const estimatedTotalDurationWithBreaks = () => {
@@ -204,7 +204,7 @@ const duplicateSongs = computed(() => {
             .entries()
     );
     return entries
-        .filter(([_, count]) => count > 1)
+        .filter(([, count]) => count > 1)
         .map(([id, count]) => ({
             song: store.songs.find((s) => s.id === id) as ISong,
             count
@@ -277,6 +277,7 @@ onUnmounted(() => {
                 <div
                     class="container"
                     v-for="(section, sectionIndex) in setlist.sections"
+                    :key="section.id"
                 >
                     <h2>
                         <EditableText
@@ -431,26 +432,31 @@ onUnmounted(() => {
                 </span>
             </div>
             <div class="content">
-                <template
-                    v-if="previewTab == 'preview'"
-                    v-for="(section, sectionIndex) in setlist.sections"
-                >
-                    <hr v-if="sectionIndex > 0" />
-                    <h2>{{ section.name }}</h2>
-                    <Editor
-                        ref="allPages"
-                        v-for="(song, i) in section.songs"
-                        printing
-                        :song="getSong(song)"
-                        @on-page-count="pageCounts[sectionIndex][i] = $event"
-                        :page-offset="
-                            pageCounts[sectionIndex]
-                                .slice(0, i)
-                                .reduce((a, b) => a + b, 0)
-                        "
-                        :section-name="section.name"
-                        disable-hotkeys
-                    />
+                <template v-if="previewTab == 'preview'">
+                    <div
+                        v-for="(section, sectionIndex) in setlist.sections"
+                        :key="section.id"
+                    >
+                        <hr v-if="sectionIndex > 0" />
+                        <h2>{{ section.name }}</h2>
+                        <Editor
+                            ref="allPages"
+                            v-for="(song, i) in section.songs"
+                            :key="song.id"
+                            printing
+                            :song="getSong(song)"
+                            @on-page-count="
+                                pageCounts[sectionIndex][i] = $event
+                            "
+                            :page-offset="
+                                pageCounts[sectionIndex]
+                                    .slice(0, i)
+                                    .reduce((a, b) => a + b, 0)
+                            "
+                            :section-name="section.name"
+                            disable-hotkeys
+                        />
+                    </div>
                 </template>
                 <template v-else-if="previewTab == 'add'">
                     <h2 v-if="songsNotInSetlist.length">Add new songs</h2>
@@ -541,6 +547,7 @@ onUnmounted(() => {
                         <div
                             class="container warning"
                             v-for="duplicate in duplicateSongs"
+                            :key="duplicate.song.id"
                         >
                             <h3>
                                 {{ duplicate.song.title }}
@@ -741,7 +748,6 @@ onUnmounted(() => {
     --display-width: calc(var(--display-height) * (210 / 297));
 
     flex: 2;
-    overflow: auto;
     max-width: calc(var(--display-width) + 3em);
     position: relative;
     display: flex;

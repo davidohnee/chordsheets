@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, ref, watch, computed, onMounted, watchEffect } from "vue";
+import { ref, watch } from "vue";
 import EditableText from "@/components/EditableText.vue";
 
 const props = defineProps({
@@ -37,7 +37,13 @@ const update = (newValue: string) => {
 };
 </script>
 <template>
-    <EditableText v-model="value" @change="update" :no-outline="noOutline" :locked="locked" :placeholder="placeholder">
+    <EditableText
+        v-model="value"
+        @change="update"
+        :no-outline="noOutline"
+        :locked="locked"
+        :placeholder="placeholder"
+    >
         <slot />
     </EditableText>
 </template>

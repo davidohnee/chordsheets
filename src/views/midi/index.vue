@@ -6,7 +6,7 @@ import MidiPreview from "../../components/MidiPreview.vue";
 const track = ref<IMidiTrack | null>(null);
 
 const parse = async () => {
-    let source = document.getElementById("filereader");
+    const source = document.getElementById("filereader");
     if (!source) return;
     const file = (source as HTMLInputElement).files?.[0];
     if (!file) return;

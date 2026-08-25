@@ -1,4 +1,4 @@
-import { ref, computed, watch } from "vue";
+import { ref } from "vue";
 import { defineStore } from "pinia";
 import { type Scale, type Key, SCALES, SHARP_KEYS } from "@/types";
 

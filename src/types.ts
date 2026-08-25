@@ -297,9 +297,10 @@ export const mock: ISong = {
             page: 2
         }
     ],
-    id: new Date().getTime()
+    id: Date.now()
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const convertLegacySong = (legacySong: any): ISong => {
     legacySong.legacy = {};
 
@@ -308,7 +309,7 @@ export const convertLegacySong = (legacySong: any): ISong => {
         legacySong.options = Object.entries(
             legacySong.legacy.options as { [key: string]: boolean }
         )
-            .filter(([k, value]) => value)
+            .filter(([_key, value]) => value)
             .map(([k]) => k);
     }
     if (legacySong.instruments && !Array.isArray(legacySong.instruments)) {

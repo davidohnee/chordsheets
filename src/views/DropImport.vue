@@ -60,8 +60,8 @@ const onDrop = (e: DragEvent) => {
     }
 };
 
-const onDragleave = (e: any) => {
-    if (e.currentTarget.contains(e.relatedTarget)) {
+const onDragleave = (e: DragEvent) => {
+    if ((e.currentTarget as HTMLElement)?.contains?.(e.relatedTarget as Node)) {
         return;
     }
     drophover.value = false;

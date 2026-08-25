@@ -1,5 +1,5 @@
 import { computed, ref } from "vue";
-import { getNoteChord } from "./chord-finder/getNoteChord";
+import { getNoteChord, type NoteId } from "./chord-finder/getNoteChord";
 import { Chord } from "tonal";
 
 let midi: MIDIAccess;
@@ -17,10 +17,10 @@ export const activeMidiNotes = ref<ActiveNote>({});
 function onMIDIMessage(evt: Event) {
     const event = evt as MIDIMessageEvent;
 
-    if ([144, 128].includes(event.data[0])) {
-        const note = event.data[1];
-        const velocity = event.data[2];
-        const type = event.data[0] === 144 ? "on" : "off";
+    if ([144, 128].includes(event.data![0])) {
+        const note = event.data![1];
+        const velocity = event.data![2];
+        const type = event.data![0] === 144 ? "on" : "off";
 
         if (type === "on") {
             activeMidiNotes.value[note] = {
@@ -43,7 +43,7 @@ function onMIDISuccess(midiAccess: MIDIAccess) {
     });
 }
 
-function onMIDIFailure(msg: any) {}
+function onMIDIFailure(_msg: unknown) {}
 
 export const start = () => {
     if (midi) return;
@@ -59,12 +59,11 @@ export const currentChord = computed(() => {
 });
 
 export const getChordName = (noteIds: number[]) => {
-    const notes = getNoteChord(noteIds.map((x) => x % 12) as any);
+    const notes = getNoteChord(noteIds.map((x) => x % 12) as NoteId[]);
     const chords = Chord.detect(notes);
 
     if (chords.length === 0) return "No chord detected";
 
-    const full = chords.join(", ");
     const shorter = chords
         .map((x) => x.replace("M", "").split("/")[0])
         .sort((a, b) => a.length - b.length);

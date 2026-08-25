@@ -1,10 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, computed, onMounted } from "vue";
-import { SCALES, type Key, type Scale, SHARP_KEYS } from "../../types";
+import { SCALES, SHARP_KEYS } from "../../types";
 import { SCALE } from "../../scales";
-import Dropdown from "../../components/Dropdown.vue";
-import * as Tone from "tone";
-import IconButton from "@/components/IconButton.vue";
 import {
     start,
     inputDevices,
@@ -30,7 +27,7 @@ watch(activeMidiNotes.value, (notes) => {
 const allScaleCombinations = computed(() => {
     const combinations = {} as Record<string, number[]>;
     for (let root = 0; root < 12; root++) {
-        for (let scale of SCALES) {
+        for (const scale of SCALES) {
             const notes = SCALE[scale];
             const name = `${SHARP_KEYS[root]} ${scale}`;
             combinations[name] = notes.keys.map((x) => (x + root) % 12);
@@ -44,7 +41,7 @@ const possibleScales = computed(() => {
     const notes = [...new Set(pressedNotes.value.map((x) => x % 12))];
 
     const possibleScales = [];
-    for (let scale of Object.keys(allScaleCombinations.value)) {
+    for (const scale of Object.keys(allScaleCombinations.value)) {
         const scaleNotes = allScaleCombinations.value[scale];
 
         if (notes.some((x) => !scaleNotes.includes(x))) continue;
@@ -61,7 +58,7 @@ const possibleScales = computed(() => {
 const possibleScalesByRoot = computed(() => {
     const rootNotes = possibleScales.value.map((x) => x.name.split(" ")[0]);
     const scales = {} as Record<string, string[]>;
-    for (let root of rootNotes) {
+    for (const root of rootNotes) {
         scales[root] = possibleScales.value
             .filter((x) => x.name.startsWith(root))
             .map((x) => x.name.split(" ")[1]);

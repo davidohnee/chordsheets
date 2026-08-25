@@ -15,7 +15,7 @@ import { start, activeMidiNotes } from "./inputListener";
 
 const synth = new Tone.Synth().toDestination();
 
-const randomElement = <T>(arr: readonly T[]): T => {
+const randomElement = <T,>(arr: readonly T[]): T => {
     return arr[Math.floor(Math.random() * arr.length)];
 };
 
@@ -67,7 +67,9 @@ const clamp = (value: number, min: number, max: number) => {
 
 const round = (value: number, decimals: number) => {
     return Number(
-        Math.round((value + "e" + decimals) as any) + "e-" + decimals
+        Math.round((value + "e" + decimals) as unknown as number) +
+            "e-" +
+            decimals
     );
 };
 
@@ -84,7 +86,7 @@ onMounted(() => {
 });
 
 watch(activeMidiNotes.value, (notes) => {
-    for (let note of Object.keys(notes)) {
+    for (const note of Object.keys(notes)) {
         const noteNumber = parseInt(note) % 12;
         clickNote(noteNumber);
     }

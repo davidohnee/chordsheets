@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
-import { SCALES, SHARP_KEYS, type Key, type Scale } from "../../types";
+import { SCALES, SHARP_KEYS } from "../../types";
 import { SCALE } from "../../scales";
 import Dropdown from "../../components/Dropdown.vue";
 import * as Tone from "tone";

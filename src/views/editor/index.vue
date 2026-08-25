@@ -1,17 +1,24 @@
 <script lang="ts" setup>
 import { type ISong } from "@/types";
-import Song from "./Song.vue";
-import { ref } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { useSongStore } from "@/stores/songs";
+import { useHistoryStore } from "@/stores/history";
 import { useRoute, useRouter } from "vue-router";
-import Editor from "./Editor.vue";
 import MinWidth from "../MinWidth.vue";
+import Editor from "./Editor.vue";
+import LinkSpotify from "@/components/modals/LinkSpotify.vue";
+import CleanupEmptySong from "@/components/modals/CleanupEmptySong.vue";
 
 const songs = useSongStore();
+const songHistory = useHistoryStore();
 
 const route = useRoute();
 const router = useRouter();
-let textId = route.params.id as string;
+let textId = Number(route.params.id);
+const editor = ref<typeof Editor>();
+const linkSpotify = ref<typeof LinkSpotify>();
+const previewing = ref(false);
+const cleanupEmptySong = ref<typeof CleanupEmptySong>();
 
 if (!textId) {
     const id = songs.addEmptySong();
@@ -19,13 +26,44 @@ if (!textId) {
         path: `/editor/${id}`,
         replace: true
     });
-    textId = String(id);
+    textId = Number(id);
 }
 
 const s = songs.song(textId);
 if (!s) router.push("/");
 const song = ref<ISong>(s as ISong);
-const preview = ref<InstanceType<typeof Song>>();
+
+const isSongEmpty = () => {
+    if (song.value.artist) return false;
+    if (song.value.title) return false;
+    if (song.value.instruments.length) return false;
+    if (song.value.sections.length) return false;
+    if (song.value.structure.length) return false;
+    return true;
+};
+
+const navigateBack = () => {
+    if (isSongEmpty()) {
+        cleanupEmptySong.value?.show();
+        return;
+    }
+    router.back();
+};
+
+const print = async () => {
+    await songs.prepareRender();
+    const pdf = await editor.value!.render!();
+    if (!pdf) return;
+    pdf.autoPrint();
+    window.open(pdf.output("bloburl"), "_blank");
+};
+
+const download = async () => {
+    await songs.prepareRender();
+    const pdf = await editor.value!.render!();
+    if (!pdf) return;
+    pdf.save(`${song.value.title}.pdf`);
+};
 
 const save = () => {
     if (!song.value) return;
@@ -43,130 +81,161 @@ const save = () => {
     downloadAnchorNode.click();
     downloadAnchorNode.remove();
 };
+
+const onKeyDown = (e: KeyboardEvent) => {
+    if (e.ctrlKey && e.key === "s") {
+        e.preventDefault();
+        save();
+    } else if (e.ctrlKey && e.shiftKey && e.key === "S") {
+        e.preventDefault();
+        download();
+    } else if (e.ctrlKey && e.key === "p") {
+        e.preventDefault();
+        print();
+    } else if (e.ctrlKey && e.shiftKey && e.key === "P") {
+        e.preventDefault();
+        previewing.value = !previewing.value;
+    }
+};
+
+onMounted(() => {
+    window.addEventListener("keydown", onKeyDown);
+    songHistory.songEdited(song.value.id);
+
+    console.log("showing link spotify", song.value.spotify, song.value.title);
+
+    if (song.value.spotify && !song.value.title) {
+        setTimeout(() => linkSpotify.value?.show(), 100);
+    }
+});
+onUnmounted(() => {
+    window.removeEventListener("keydown", onKeyDown);
+});
 </script>
 <template>
     <MinWidth :minWidth="300">
-        <router-link
-            to="/browse"
-            class="back-button"
-        >
-            <span class="material-symbols-rounded">arrow_back</span>
-        </router-link>
-        <div class="editor">
-            <div class="preview">
-                <div
-                    class="pages"
-                    v-if="preview"
-                >
-                    <template v-if="false">
-                        <span
-                            @click="preview.prevPage"
-                            class="material-symbols-rounded"
-                        >
-                            chevron_left
-                        </span>
-                        {{ preview.getCurrentPage() }} /
-                        {{ preview.getTotalPages() }}
-                        <span
-                            @click="preview.nextPage"
-                            class="material-symbols-rounded"
-                        >
-                            chevron_right
-                        </span>
-                    </template>
-                    <span
-                        class="material-symbols-rounded"
-                        @click="preview.print"
-                    >
-                        print
-                    </span>
-                    <span
-                        class="material-symbols-rounded"
-                        @click="preview.download"
-                    >
-                        picture_as_pdf
-                    </span>
-                    <span
-                        class="material-symbols-rounded"
-                        @click="save"
-                    >
-                        file_download
-                    </span>
-                </div>
-                <div class="">
-                    <Song
-                        :song="song"
-                        ref="preview"
-                    />
-                </div>
-            </div>
-            <MinWidth
-                :minWidth="1100"
-                error=""
+        <LinkSpotify
+            ref="linkSpotify"
+            :song="song"
+        />
+        <CleanupEmptySong
+            ref="cleanupEmptySong"
+            :song="song"
+            @close="$router.push('/browse')"
+        />
+        <div class="editor_container">
+            <a
+                @click="navigateBack"
+                class="back-button"
             >
-                <div class="config container">
-                    <Editor :song="song" />
-                </div>
-            </MinWidth>
+                <span class="material-symbols-rounded">arrow_back</span>
+            </a>
+
+            <div class="toolbar">
+                <span
+                    class="material-symbols-rounded"
+                    @click="print"
+                    title="Print (Ctrl+P)"
+                >
+                    print
+                </span>
+                <span
+                    class="material-symbols-rounded"
+                    @click="download"
+                    title="Download as PDF (CTRL+SHIFT+S)"
+                >
+                    picture_as_pdf
+                </span>
+                <span
+                    class="material-symbols-rounded"
+                    @click="save"
+                    title="Download as JSON (CTRL+S)"
+                >
+                    file_download
+                </span>
+                <div class="divider"></div>
+                <span
+                    class="material-symbols-rounded"
+                    @click="linkSpotify?.show()"
+                    title="Link Spotify"
+                >
+                    link
+                </span>
+                <div class="divider"></div>
+                <span
+                    class="material-symbols-rounded"
+                    @click="previewing = !previewing"
+                    title="Preview (CTRL+SHIFT+P)"
+                >
+                    {{ previewing ? "preview_off" : "preview" }}
+                </span>
+            </div>
+
+            <Editor
+                ref="editor"
+                :song="song"
+                :printing="previewing"
+            />
         </div>
     </MinWidth>
 </template>
 
-<style>
-.preview {
-    .print {
-        display: flex;
-    }
-}
-</style>
+<style></style>
 
 <style scoped>
 .back-button {
     position: fixed;
-    top: 2em;
-    left: calc(1em + 220px + 2em);
+    top: 1em;
+    left: calc(1em + var(--sidebar-width) + 2em);
     z-index: 1;
+    cursor: pointer;
 
     @media (max-width: 800px) {
         left: 1em;
     }
 }
 
-.editor {
+.divider {
+    width: 1px;
+    height: 1em;
+    background: var(--color-border);
+}
+
+.toolbar {
     display: flex;
-    flex-direction: row;
-    position: relative;
-    z-index: 0;
     gap: 1em;
+    justify-content: center;
+    align-items: center;
+    padding: 1em;
+    background: var(--color-background);
+    border-radius: 0.5em;
+    border: 1px solid var(--color-border);
+    box-shadow: 0 0 1em rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 1em;
+    z-index: 1;
+
+    & span {
+        cursor: pointer;
+
+        &:hover {
+            color: var(--accent);
+        }
+    }
+}
+
+.editor_container {
     background: none;
     box-shadow: none;
     border: none;
     padding: 0;
-    height: 100%;
-    width: 100%;
-}
-
-.config {
-    flex: 1;
-}
-
-.preview {
     display: flex;
-    justify-content: center;
-    align-items: center;
     flex-direction: column;
+    align-items: center;
     gap: 1em;
-
-    .pages {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 1em;
-        color: var(--color-text);
-
-        .material-symbols-rounded {
-            cursor: pointer;
-        }
-    }
+    overflow: auto;
+    height: 100%;
+    padding-top: 6em;
+    overflow-y: auto;
 }
 </style>

@@ -13,7 +13,7 @@ const NOTES = {
     11: "B"
 };
 
-type NoteId = keyof typeof NOTES;
+export type NoteId = keyof typeof NOTES;
 type NoteName = (typeof NOTES)[NoteId];
 export const getNoteChord = (idChord: NoteId[]): NoteName[] => {
     return idChord.map((element) => {
