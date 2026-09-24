@@ -2,8 +2,6 @@
 import IconButton from "@/components/IconButton.vue";
 import { useSongStore } from "@/stores/songs";
 import { ref, watchEffect } from "vue";
-import Dropdown from "@/components/Dropdown.vue";
-import TextInput from "@/components/TextInput.vue";
 import draggable from "vuedraggable";
 import type { ISong } from "@/types";
 import { useSettingsStore } from "@/stores/settings";
@@ -75,55 +73,50 @@ const updateOrder = ({
 const isMobile = window.innerWidth < 800;
 </script>
 <template>
-    <div class="toolbar">
-        <div class="filters">
-            <TextInput
-                label="Search"
+    <div class="custom">
+        <div
+            class="toolbar container"
+            v-if="store.songs.length"
+        >
+            <input
+                class="search"
+                placeholder="Search for a song ..."
+                type="text"
                 v-model="filters.query"
-                placeholder="Search for a song"
-            />
-            <Dropdown
-                label="Artist"
-                v-model="filters.artist"
-                :options="[
-                    '(any)',
-                    ...new Set(store.songs.map((song) => song.artist).sort())
-                ]"
+                ref="searchField"
             />
         </div>
-    </div>
-    <div
-        class="songs"
-        v-if="!filteredSongs.length"
-    >
-        <p class="muted">
-            No songs found. Do you want to add it?
+        <div
+            class="center songs"
+            v-if="!filteredSongs.length"
+        >
+            <p class="muted">No songs found. Do you want to add one?</p>
             <IconButton
                 icon="add"
                 label="Add a new song"
                 @click="newSong"
             />
-        </p>
+        </div>
+        <draggable
+            v-else
+            v-model="filteredSongs"
+            class="container songs"
+            @change="updateOrder"
+            item-key="id"
+            @dragover.stop
+            :disabled="isMobile"
+        >
+            <template #item="{ element: song }">
+                <router-link :to="settings.editorUrl(song.id)">
+                    <Song
+                        :song="song"
+                        allow-delete
+                        @delete="store.removeSong(song)"
+                    />
+                </router-link>
+            </template>
+        </draggable>
     </div>
-    <draggable
-        v-else
-        v-model="filteredSongs"
-        class="songs"
-        @change="updateOrder"
-        item-key="id"
-        @dragover.stop
-        :disabled="isMobile"
-    >
-        <template #item="{ element: song }">
-            <router-link :to="settings.editorUrl(song.id)">
-                <Song
-                    :song="song"
-                    allow-delete
-                    @delete="store.removeSong(song)"
-                />
-            </router-link>
-        </template>
-    </draggable>
 </template>
 
 <style scoped>
@@ -138,13 +131,29 @@ const isMobile = window.innerWidth < 800;
     }
 }
 
+.custom {
+    position: relative;
+    height: 100%;
+}
+
 .songs {
     overflow-y: auto;
+}
+
+.center {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 1em;
 }
 
 .toolbar {
     background: var(--color-background);
     margin-bottom: 1em;
+    position: sticky;
+    top: 0;
 }
 
 .title {

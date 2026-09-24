@@ -28,7 +28,7 @@ console.log(`%cChordSheets v${version}`, "color:#00bd7e;font-size:2rem");
 }
 
 aside,
-main > div:not(.grid),
+main > div:not(.grid, .custom),
 main .container {
     background: var(--color-background);
     border: 1px solid var(--color-border);

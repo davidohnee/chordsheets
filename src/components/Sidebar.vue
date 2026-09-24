@@ -40,10 +40,6 @@ const toggleExpanded = () => {
         <div class="links">
             <RouterLink to="/">
                 <span class="material-symbols-rounded">home</span>
-                <span class="label">Home</span>
-            </RouterLink>
-            <RouterLink to="/browse">
-                <span class="material-symbols-rounded">library_music</span>
                 <span class="label">Songs</span>
             </RouterLink>
             <RouterLink to="/setlists">

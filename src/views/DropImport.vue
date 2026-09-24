@@ -22,7 +22,7 @@ const addItem = (item: ISong | ISetlist) => {
         }
     } else {
         songs.addSong(item);
-        return "/browse";
+        return "/";
     }
 };
 

@@ -191,7 +191,7 @@ const allActions = (query: string) =>
             subtitle: "View and edit existing songs",
             icon: { name: "library_music", tint: "red" },
             action: () => {
-                router.push("/browse");
+                router.push("/");
             }
         }
     ] as Item[];

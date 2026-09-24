@@ -171,6 +171,7 @@ const emit = defineEmits(["select"]);
         @focusout="isFocused = false"
     >
         <input
+            class="search"
             type="text"
             :placeholder="placeholderText"
             v-model="query"
@@ -227,19 +228,6 @@ const emit = defineEmits(["select"]);
 </template>
 
 <style scoped>
-input {
-    border: none;
-    border-bottom: 1px solid #ccc;
-    outline: none;
-    background: none;
-    width: calc(100%);
-    font-size: 1.2rem;
-    min-width: 50ch;
-    padding: 0.5rem;
-    font-family: inherit;
-    color: var(--color-heading);
-}
-
 .content {
     width: 100%;
 }
